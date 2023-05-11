@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/streadway/amqp"
-	"go-queue/event"
+	"go-queue/pkg/event"
 )
 
 func main() {

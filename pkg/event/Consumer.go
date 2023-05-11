@@ -1,8 +1,10 @@
 package event
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/streadway/amqp"
+	"go-queue/worker/sender"
 	"log"
 )
 
@@ -62,9 +64,14 @@ func (consumer *Consumer) Listen(topics []string) error {
 
 	forever := make(chan bool)
 	go func() {
-
 		for d := range msgs {
-			str := fmt.Sprintf("Received a message: %v", d.Body)
+			var patients []sender.Patient
+			err := json.Unmarshal(d.Body, &patients)
+			if err != nil {
+				return
+			}
+
+			str := fmt.Sprintf("Received a message: %v", patients)
 			log.Println(str)
 		}
 	}()

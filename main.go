@@ -2,21 +2,26 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"go-queue/publisher/domain"
+	"go-queue/config"
+	domain2 "go-queue/worker/sender/domain"
 	"log"
 	"time"
 )
 
 func main() {
-	list := []int{4, 1, 21, 1, 1}
-	repository := domain.NewRepository(&list)
-	service := domain.NewService(repository)
-	controller := domain.NewController(service)
-	queue, err := service.AddQueue(12)
+	db, err := config.NewDB()
+	if err != nil {
+		log.Fatalf("failed to initialize the database: %v", err)
+	}
+	defer db.Close()
+	repository := domain2.NewRepository(db)
+	service := domain2.NewService(repository)
+	controller := domain2.NewController(service)
+
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(queue)
+	//log.Println(queue)
 	app := fiber.New()
 
 	api := app.Group("/api")
